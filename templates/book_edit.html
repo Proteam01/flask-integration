@@ -1,0 +1,19 @@
+<html>
+    <body>
+        <form method="POST" >
+            {{book_form.csrf_token}}
+            <div>
+                {{book_form.name.label}} {{book_form.name}}
+            </div>
+            <div>
+                {{book_form.type.label}}{{book_form.type}}
+            </div>
+            <div>
+                {{book_form.created.label}}{{book_form.created(type="date")}}
+            </div>
+            <div>
+                {{book_form.save}}
+            </div>
+        </form>
+    </body>
+</html>

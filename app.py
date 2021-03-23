@@ -1,6 +1,9 @@
 from flask_migrate import Migrate
+
+from forms import BookForm
 from helper import read_database_options, db
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+
 from models import Book
 
 app = Flask(__name__)
@@ -20,6 +23,7 @@ db.init_app(app)
 
 migrate = Migrate()
 migrate.init_app(app, db)
+app.config['SECRET_KEY'] = '434534isduvcsdaouv4et6w78sdjvbcs'
 
 
 @app.route('/')
@@ -30,7 +34,15 @@ def book_list():
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def book_add():
-    pass
+    book = Book()
+    book_form = BookForm(obj=book)
+    if request.method == 'POST':
+        if book_form.validate_on_submit():
+            book_form.populate_obj(book)
+            Book.query.save(book)
+
+
+    return render_template('book_edit.html', book_form=book_form)
 
 
 if __name__ == '__main__':
