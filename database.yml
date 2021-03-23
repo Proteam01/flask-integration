@@ -1,0 +1,6 @@
+database:
+  host: localhost
+  username: droidx
+  password: droidx
+  port: 6937
+  db: books_sample

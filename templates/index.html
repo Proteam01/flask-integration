@@ -1,0 +1,20 @@
+<html>
+    <body>
+        <table border="1" >
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>type</th>
+                <th>creation</th>
+            </tr>
+            {% for book in books %}
+            <tr>
+                <td>{{book.id}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.type}}</td>
+                <td>{{book.created}}</td>
+            </tr>
+            {% endfor  %}
+        </table>
+    </body>
+</html>
