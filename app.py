@@ -37,10 +37,9 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.__contains__('username'):
-            return redirect(url_for('login', next=request.url))
+            return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-
 
 
 @app.route('/')
