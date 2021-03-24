@@ -1,12 +1,18 @@
+from functools import wraps
+
 from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 
 from forms import BookForm
 from helper import read_database_options, db
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 
 from models import Book
 
 app = Flask(__name__)
+
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 DATABASE_OPTIONS = read_database_options()['database']
 
@@ -27,13 +33,25 @@ app.secret_key = '0fdsnfobdsf923bdvkibd2346bsdkvjcbdsw'
 app.config['SECRET_KEY'] = '434534isduvcsdaouv4et6w78sdjvbcs'
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.__contains__('username'):
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+
 @app.route('/')
+@login_required
 def book_list():
     books = Book.query.order_by('id')
     return render_template('index.html', books=books)
 
 
 @app.route('/add_book', methods=['GET', 'POST'])
+@login_required
 def book_add():
     book = Book()
     book_form = BookForm(obj=book)
@@ -47,6 +65,7 @@ def book_add():
 
 
 @app.route('/update_book/<int:id>', methods=['GET', 'POST'])
+@login_required
 def book_update(id):
     book = Book.query.get(id)
     book_form = BookForm(obj=book)
@@ -60,11 +79,32 @@ def book_update(id):
 
 
 @app.route('/delete_book/<int:id>', methods=['GET'])
+@login_required
 def book_delete(id):
     book = Book.query.get(id)
     db.session.delete(book)
     db.session.commit()
     return redirect('/')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == 'admin' and password == 'admin123':
+            session['username'] = username
+            return redirect('/')
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    if session.__contains__('username'):
+        session.pop('username')
+        return redirect('/')
+    else:
+        return redirect('login')
 
 
 if __name__ == '__main__':
