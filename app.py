@@ -2,7 +2,7 @@ from flask_migrate import Migrate
 
 from forms import BookForm
 from helper import read_database_options, db
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 
 from models import Book
 
@@ -11,8 +11,8 @@ app = Flask(__name__)
 DATABASE_OPTIONS = read_database_options()['database']
 
 DATABASE_URL = f'postgresql://{DATABASE_OPTIONS["username"]}:\
-{DATABASE_OPTIONS["password"]}@{DATABASE_OPTIONS["host"]}:\
-{DATABASE_OPTIONS["port"]}/{DATABASE_OPTIONS["db"]}'
+    {DATABASE_OPTIONS["password"]}@{DATABASE_OPTIONS["host"]}:\
+    {DATABASE_OPTIONS["port"]}/{DATABASE_OPTIONS["db"]}'
 
 print(DATABASE_URL)
 
@@ -39,10 +39,24 @@ def book_add():
     if request.method == 'POST':
         if book_form.validate_on_submit():
             book_form.populate_obj(book)
-            Book.query.save(book)
-
-
+            db.session.add(book)
+            db.session.commit()
+            return redirect('/')
     return render_template('book_edit.html', book_form=book_form)
+
+
+@app.route('/update_book/<int:id>', methods=['GET', 'POST'])
+def book_update(id):
+    book = Book.query.get(id)
+    book_form = BookForm(obj=book)
+    if request.method == 'POST':
+        if book_form.validate_on_submit():
+            book_form.populate_obj(book)
+            db.session.add(book)
+            db.session.commit()
+            return redirect('/')
+    return render_template('book_edit.html', book_form=book_form)
+
 
 
 if __name__ == '__main__':
