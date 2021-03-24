@@ -8,6 +8,7 @@
                 <th>type</th>
                 <th>creation</th>
                 <th>edit</th>
+                <th>delete</th>
             </tr>
             {% for book in books %}
             <tr>
@@ -17,6 +18,9 @@
                 <td>{{book.created}}</td>
                 <td>
                     <a href="/update_book/{{book.id}}">edit</a>
+                </td>
+                <td>
+                    <a href="/delete_book/{{book.id}}">delete</a>
                 </td>
             </tr>
             {% endfor  %}

@@ -2,7 +2,7 @@ from flask_migrate import Migrate
 
 from forms import BookForm
 from helper import read_database_options, db
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 
 from models import Book
 
@@ -23,6 +23,7 @@ db.init_app(app)
 
 migrate = Migrate()
 migrate.init_app(app, db)
+app.secret_key = '0fdsnfobdsf923bdvkibd2346bsdkvjcbdsw'
 app.config['SECRET_KEY'] = '434534isduvcsdaouv4et6w78sdjvbcs'
 
 
@@ -57,6 +58,13 @@ def book_update(id):
             return redirect('/')
     return render_template('book_edit.html', book_form=book_form)
 
+
+@app.route('/delete_book/<int:id>', methods=['GET'])
+def book_delete(id):
+    book = Book.query.get(id)
+    db.session.delete(book)
+    db.session.commit()
+    return redirect('/')
 
 
 if __name__ == '__main__':
