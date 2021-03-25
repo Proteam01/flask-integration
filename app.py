@@ -24,9 +24,7 @@ csrf.init_app(app)
 
 DATABASE_OPTIONS = read_database_options()['database']
 
-DATABASE_URL = f'postgresql://{DATABASE_OPTIONS["username"]}:\
-    {DATABASE_OPTIONS["password"]}@{DATABASE_OPTIONS["host"]}:\
-    {DATABASE_OPTIONS["port"]}/{DATABASE_OPTIONS["db"]}'
+DATABASE_URL = f'postgresql://{DATABASE_OPTIONS["username"]}:{DATABASE_OPTIONS["password"]}@{DATABASE_OPTIONS["host"]}:{DATABASE_OPTIONS["port"]}/{DATABASE_OPTIONS["db"]}'
 
 print(DATABASE_URL)
 
